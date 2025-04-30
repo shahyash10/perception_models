@@ -1,7 +1,7 @@
 # We use a global batch size of 512 in stage # 1 for PLM-1B model. Please adjust batch_size as per your training setup.
 # For example, one possible configuration is batch_size=16,nodes=4,gpus_per_node=8 = 16*4*8 = 512 global batch size.
 
-name: "plm_1b_stage1"
+name: "multi_node_plm_1b_stage1"
 dump_dir: ./plm_1b_stage1
 steps: 8000
 seed: 777
@@ -83,7 +83,7 @@ logging:
         project: plm
         entity: yashs
         group: finetune
-        name: PLM_1B_stage1
+        name: multi_node_PLM_1B_stage1
         tags:
         - PLM_1B
         - stage1
