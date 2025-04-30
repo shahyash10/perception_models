@@ -71,7 +71,7 @@ checkpoint:
     dump:
         every: 500
         keep: 1
-    init_ckpt_path: meta-llama/Llama-3.2-1B-Instruct/original
+    init_ckpt_path: facebook/Llama-3.2-1B-Instruct/original
     # Please use the script at apps/plm/interpolate_PE_pos_embed.py to interpolate PE-Core-L14-336 (https://huggingface.co/facebook/PE-Core-L14-336) checkpoints to 448 resolution.
     vision_model_path: facebook/PE-Core-L14-336-interpolated-to-448/model.pt
     is_consolidated_model: True
