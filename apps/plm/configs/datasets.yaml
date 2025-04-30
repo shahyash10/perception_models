@@ -28,3 +28,11 @@ dummy_stc_RCap:
 dummy_stc_RTLoc:
     annotation: apps/plm/dummy_datasets/plm_stc/RTLoc.jsonl
     root_dir: apps/plm/dummy_datasets/plm_stc/videos
+
+sa1b:
+    annotation: /checkpoint/yashs/datasets/PLM_Image_Auto/sa1b/train.jsonl
+    root_dir: /checkpoint/yashs/datasets/PLM_Image_Auto/sa1b/images
+
+LLaVA-Pretrain:
+    annotation: /checkpoint/yashs/datasets/LLaVA-Pretrain/train.jsonl
+    root_dir: /checkpoint/yashs/datasets/LLaVA-Pretrain/images
