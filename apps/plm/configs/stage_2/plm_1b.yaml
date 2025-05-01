@@ -2,8 +2,8 @@
 # For example, one possible configuration is batch_size=8,nodes=32,gpus_per_node=8 = 8*32*8 = 2048 global batch size.
 
 name: "plm_1b_stage2"
-dump_dir: ./plm_1b_stage2
-steps: 35000
+dump_dir: /checkpoint/yashs/logs/plm/${name}/
+steps: 4000
 seed: 777
 optim:
     lr: 4e-5
@@ -55,7 +55,7 @@ model:
         use_gaussian: true
 
 data:
-    datamix: <Please consider using data split listed in Table A1 of our paper https://arxiv.org/pdf/2504.13180. The weight of the dataset would be same as the number of samples.>
+    datamix: "LLaVA-Instruct-150k:1.0"
     num_workers: 8
     batch_size: 4
     image_res: 448
@@ -73,9 +73,17 @@ checkpoint:
     dump:
         every: 500
         keep: 1
-    init_ckpt_path: <Point it to the consolidated checkpoints from PLM 1B Stage 1>
+    init_ckpt_path: /checkpoint/yashs/logs/plm/plm_1b_stage1/checkpoints/0000004000/
     is_consolidated_model: True
 
 logging:
     freq: 10
     level: INFO  # Available choices for logging level are: [NOTSET, DEBUG, INFO, WARN, ERROR, FATAL, CRITICAL]
+    wandb:
+        project: stage2
+        entity: plm
+        group: finetune
+        name: plm_1b_stage2
+        tags:
+        - plm_1B
+        - stage2
