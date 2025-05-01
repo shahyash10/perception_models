@@ -1,8 +1,8 @@
 # We use a global batch size of 512 in stage # 1 for PLM-1B model. Please adjust batch_size as per your training setup.
 # For example, one possible configuration is batch_size=16,nodes=4,gpus_per_node=8 = 16*4*8 = 512 global batch size.
 
-name: "multi_node_plm_1b_stage1"
-dump_dir: ./plm_1b_stage1
+name: "plm_1b_stage1"
+dump_dir: /checkpoint/yashs/logs/plm/${name}/
 steps: 8000
 seed: 777
 optim:
@@ -71,7 +71,7 @@ checkpoint:
     dump:
         every: 500
         keep: 1
-    init_ckpt_path: facebook/Llama-3.2-1B-Instruct/original
+    init_ckpt_path: meta-llama/Llama-3.2-1B-Instruct/original
     # Please use the script at apps/plm/interpolate_PE_pos_embed.py to interpolate PE-Core-L14-336 (https://huggingface.co/facebook/PE-Core-L14-336) checkpoints to 448 resolution.
     vision_model_path: facebook/PE-Core-L14-336-interpolated-to-448/model.pt
     is_consolidated_model: True
@@ -80,10 +80,10 @@ logging:
     freq: 10
     level: INFO  # Available choices for logging level are: [NOTSET, DEBUG, INFO, WARN, ERROR, FATAL, CRITICAL]
     wandb:
-        project: plm
-        entity: yashs
+        project: stage1
+        entity: plm
         group: finetune
-        name: multi_node_PLM_1B_stage1
+        name: plm_1b_stage1
         tags:
-        - PLM_1B
+        - plm_1B
         - stage1
