@@ -21,6 +21,21 @@ source /private/home/yashs/miniconda3/etc/profile.d/conda.sh
 conda activate perception_models
 cd /private/home/yashs/projects/perception_models/
 echo "conda activated and slurm script working"
-torchrun --nproc-per-node 8 -m apps.plm.train config=apps/plm/configs/stage_1/plm_1b.yaml
+
+export OMP_NUM_THREADS=1
+export HF_DATASETS_OFFLINE=1
+export NCCL_TIMEOUT=120
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+
+# Check if a config file was provided as an argument
+if [ -z "$1" ]; then
+    echo "Error: No config file provided."
+    exit 1
+fi
+
+CONFIG_FILE=$1
+echo "Using config file: $CONFIG_FILE"
+
+torchrun --nproc-per-node 8 -m apps.plm.train config=$CONFIG_FILE
 conda deactivate
 echo "finished training
