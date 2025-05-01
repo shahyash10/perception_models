@@ -38,6 +38,16 @@ fi
 
 CONFIG_FILE=$1
 echo "Using config file: $CONFIG_FILE"
+
+
+# Check if a config file was provided as an argument
+if [ -z "$1" ]; then
+    echo "Error: No config file provided."
+    exit 1
+fi
+
+CONFIG_FILE=$1
+echo "Using config file: $CONFIG_FILE"
 echo "Number of GPU nodes: $SLURM_JOB_NUM_NODES"
 echo "Number of tasks created by SLURM per GPU node: $SLURM_NTASKS_PER_NODE"
 
