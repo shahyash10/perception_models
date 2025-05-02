@@ -2,7 +2,7 @@
 # For example, one possible configuration is batch_size=16,nodes=4,gpus_per_node=8 = 16*4*8 = 512 global batch size.
 
 name: "plm_1b_stage1"
-dump_dir: ./plm_1b_stage1
+dump_dir: /checkpoint/${oc.env:USER}/logs/plm/${name}/
 steps: 8000
 seed: 777
 optim:
@@ -53,7 +53,7 @@ model:
         use_gaussian: true
 
 data:
-    datamix: <We use our synthetic SA-1B dataset for stage 1, https://huggingface.co/datasets/facebook/PLM-Image-Auto/tree/main/sa1b>
+    datamix: "LLaVA-Pretrain:1.0"
     num_workers: 8
     batch_size: 16
     image_res: 448
@@ -79,3 +79,11 @@ checkpoint:
 logging:
     freq: 10
     level: INFO  # Available choices for logging level are: [NOTSET, DEBUG, INFO, WARN, ERROR, FATAL, CRITICAL]
+    wandb:
+        project: stage1
+        entity: plm
+        group: finetune
+        name: plm_1b_stage1
+        tags:
+        - plm_1B
+        - stage1
