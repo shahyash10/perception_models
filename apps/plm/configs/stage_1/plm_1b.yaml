@@ -2,7 +2,7 @@
 # For example, one possible configuration is batch_size=16,nodes=4,gpus_per_node=8 = 16*4*8 = 512 global batch size.
 
 name: "plm_1b_stage1"
-dump_dir: /checkpoint/yashs/logs/plm/${name}/
+dump_dir: /checkpoint/${oc.env:USER}/logs/plm/${name}/
 steps: 8000
 seed: 777
 optim:
