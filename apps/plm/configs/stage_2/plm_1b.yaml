@@ -57,7 +57,7 @@ model:
 data:
     datamix: "LLaVA-Pretrain:1.0"
     num_workers: 8
-    batch_size: 4
+    batch_size: 1
     image_res: 448
     max_num_tiles: 16
     max_video_frames: 16

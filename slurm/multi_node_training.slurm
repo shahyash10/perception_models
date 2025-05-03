@@ -29,6 +29,7 @@ export MASTER_ADDR=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
 export MASTER_PORT=29500 
 export HF_DATASETS_OFFLINE=1
 export NCCL_TIMEOUT=120
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 # Check if a config file was provided as an argument
 if [ -z "$1" ]; then
