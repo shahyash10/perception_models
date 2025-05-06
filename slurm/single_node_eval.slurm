@@ -30,7 +30,8 @@ export CUDA_LAUNCH_BLOCKING=1
 
 
 CHECKPOINTS_PATH=/checkpoint/yashs/logs/plm/plm_1b_stage2/checkpoints/0000004000
-SELECTED_TASK="docvqa,chartqa,textvqa,infovqa,ai2d_no_mask,ok_vqa,vizwiz_vqa,mme,realworldqa,pope,mmmu,ocrbench,coco_karpathy_val,nocaps,vqav2_val"
+# SELECTED_TASK="docvqa,chartqa,textvqa,infovqa,ai2d_no_mask,ok_vqa,vizwiz_vqa,mme,realworldqa,pope,mmmu,ocrbench,coco_karpathy_val,nocaps,vqav2_val"
+SELECTED_TASK="realworldqa,mmmu"
 OUTPUT_PATH=/private/home/yashs/projects/perception_models/eval_results/trial1/
 
 accelerate launch --num_processes=8 \
@@ -38,7 +39,7 @@ accelerate launch --num_processes=8 \
 --model plm \
 --model_args pretrained=$CHECKPOINTS_PATH \
 --tasks $SELECTED_TASK \
---batch_size 1 \
+--batch_size 8 \
 --log_samples \
 --log_samples_suffix plm \
 --output_path $OUTPUT_PATH \

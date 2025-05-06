@@ -1,7 +1,7 @@
 # We use a global batch size of 2048 in stage # 3 for PLM-1B model. Please adjust batch_size as per your training setup.
 # For example, one possible configuration is batch_size=8,nodes=32,gpus_per_node=8 = 8*32*8 = 2048 global batch size.
 
-name: "plm_1b_stage2"
+name: "plm_1b_stage2_instruct"
 dump_dir:  /checkpoint/${oc.env:USER}/logs/plm/${name}/
 steps: 4000
 seed: 777
@@ -55,9 +55,9 @@ model:
         use_gaussian: true
 
 data:
-    datamix: "LLaVA-Pretrain:1.0"
+    datamix: "LLaVA-Instruct-150k:1.0"
     num_workers: 8
-    batch_size: 1
+    batch_size: 2
     image_res: 448
     max_num_tiles: 16
     max_video_frames: 16
@@ -83,7 +83,7 @@ logging:
         project: stage2
         entity: plm
         group: finetune
-        name: plm_1b_stage2
+        name: plm_1b_stage2_instruct
         tags:
         - plm_1b
         - stage2
