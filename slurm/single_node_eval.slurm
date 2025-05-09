@@ -29,10 +29,11 @@ export TORCH_USE_CUDA_DSA=1
 export CUDA_LAUNCH_BLOCKING=1
 
 
-CHECKPOINTS_PATH=/checkpoint/yashs/logs/plm/plm_1b_stage2_instruct/checkpoints/0000004000
+# CHECKPOINTS_PATH=/checkpoint/yashs/logs/plm/plm_1b_stage2_instruct/checkpoints/0000004000
+CHECKPOINTS_PATH=/checkpoint/yashs/logs/plm/plm_1b_stage2/checkpoints/0000004000 
 # SELECTED_TASK="docvqa,chartqa,textvqa,infovqa,ai2d_no_mask,ok_vqa,vizwiz_vqa,mme,realworldqa,pope,mmmu,ocrbench,coco_karpathy_val,nocaps,vqav2_val"
 SELECTED_TASK="realworldqa,mmmu"
-OUTPUT_PATH=/private/home/yashs/projects/perception_models/eval_results/trial1/
+OUTPUT_PATH=/private/home/yashs/projects/perception_models/eval_results/working_trial1/
 
 echo "checkpoint path: $CHECKPOINTS_PATH"
 echo "selected task: $SELECTED_TASK"
@@ -47,4 +48,4 @@ accelerate launch --num_processes=8 \
 --output_path $OUTPUT_PATH \
 --verbosity DEBUG
 conda deactivate
-echo "finished training
+echo "finished training"
