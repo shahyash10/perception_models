@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## partition name
-#SBATCH --partition=learnlab,devlab
+## --partition=learnlab,devlab
 ## number of nodes
 #SBATCH --nodes=4 
 #SBATCH --gpus-per-node=8
@@ -18,18 +18,19 @@
 #SBATCH --export=ALL
 #SBATCH --mail-type=FAIL
 
-source /private/home/yashs/miniconda3/etc/profile.d/conda.sh
+source /home/yashs/miniconda3/etc/profile.d/conda.sh
 conda activate perception_models
-cd /private/home/yashs/projects/perception_models/
+cd /home/yashs/projects/perception_models
 echo "conda activated and slurm script working"
 
 echo "about to run on $SLURM_JOB_NUM_NODES nodes"
 export OMP_NUM_THREADS=1
 export MASTER_ADDR=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
 export MASTER_PORT=29500 
-export HF_DATASETS_OFFLINE=1
 export NCCL_TIMEOUT=120
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export LD_PRELOAD=/usr/local/cuda-12.4/lib/libnccl.so 
+export LD_LIBRARY_PATH=/opt/aws-ofi-nccl/lib/:$LD_LIBRARY_PATH
 
 # Check if a config file was provided as an argument
 if [ -z "$1" ]; then
