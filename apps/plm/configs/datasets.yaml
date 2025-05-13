@@ -44,3 +44,7 @@ LLaVA-Instruct-150k:
 Cambrian-Stage1:
     annotation: /fsx-checkpoints/yashs/datasets/Cambrian-Alignment/train.jsonl
     root_dir: /fsx-checkpoints/yashs/datasets/Cambrian-Alignment/
+
+Cambrian-Shuffled-Stage1:
+    annotation: /fsx-checkpoints/yashs/datasets/Cambrian-Alignment/train_shuffled.jsonl
+    root_dir: /fsx-checkpoints/yashs/datasets/Cambrian-Alignment/

@@ -1,8 +1,8 @@
 # We use a global batch size of 512 in stage # 1 for PLM-1B model. Please adjust batch_size as per your training setup.
 # For example, one possible configuration is batch_size=16,nodes=4,gpus_per_node=8 = 16*4*8 = 512 global batch size.
 
-name: "plm_1b_cambrian_stage1"
-dump_dir: /fsx-checkpoints/yashs/plm
+name: "plm_1b_cambrian_stage1_shuffled"
+dump_dir: /fsx-checkpoints/yashs/plm/plm_1b_cambrian_stage1_shuffled
 steps: 8000
 seed: 777
 optim:
@@ -53,7 +53,7 @@ model:
         use_gaussian: true
 
 data:
-    datamix: "Cambrian-Stage1:1.0"
+    datamix: "Cambrian-Shuffled-Stage1:1.0"
     num_workers: 8
     batch_size: 16
     image_res: 448
@@ -83,7 +83,7 @@ logging:
         project: stage1
         entity: plm
         group: finetune
-        name: plm_1b_cambrian_stage1
+        name: plm_1b_cambrian_stage1_shuffled
         tags:
         - plm_1B
         - stage1
