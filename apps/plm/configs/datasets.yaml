@@ -40,3 +40,11 @@ LLaVA-Pretrain:
 LLaVA-Instruct-150k:
     annotation: /checkpoint/yashs/datasets/LLaVA-Instruct-150K/train.jsonl
     root_dir: /datasets01/COCO/022719/train2017
+
+Cambrian-Stage1:
+    annotation: /fsx-checkpoints/yashs/datasets/Cambrian-Alignment/train.jsonl
+    root_dir: /fsx-checkpoints/yashs/datasets/Cambrian-Alignment/
+
+Cambrian-Shuffled-Stage1:
+    annotation: /fsx-checkpoints/yashs/datasets/Cambrian-Alignment/train_shuffled.jsonl
+    root_dir: /fsx-checkpoints/yashs/datasets/Cambrian-Alignment/
