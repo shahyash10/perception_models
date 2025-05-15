@@ -52,3 +52,7 @@ Cambrian-Shuffled-Stage1:
 Cambrian10M-Shuffled:
     annotation: /fsx-checkpoints/yashs/datasets/Cambrian-10M/jsons/Cambrian10M_shuffled.jsonl
     root_dir: /fsx-checkpoints/yashs/datasets/Cambrian-10M/
+
+Cambrian7M-Shuffled:
+    annotation: /fsx-checkpoints/yashs/datasets/Cambrian-10M/jsons/Cambrian7M_shuffled.jsonl
+    root_dir: /fsx-checkpoints/yashs/datasets/Cambrian-10M/
