@@ -3,7 +3,7 @@
 
 name: "plm_1b_stage2_cambrian"
 dump_dir:  /fsx-checkpoints/yashs/plm/plm_1b_cambrian_stage2
-steps: 35000
+steps: 80000
 seed: 777
 optim:
     lr: 4e-5
@@ -55,7 +55,7 @@ model:
         use_gaussian: true
 
 data:
-    datamix: "LLaVA-Instruct-150k:1.0"
+    datamix: "Cambrian10M-Shuffled:1.0"
     num_workers: 8
     batch_size: 4
     image_res: 448
