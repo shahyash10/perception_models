@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## partition name
-#SBATCH --partition=learnlab,devlab
+## --partition=learnlab,devlab
 ## number of nodes
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node=8
@@ -17,23 +17,23 @@
 #SBATCH --export=ALL
 #SBATCH --mail-type=FAIL
 
-source /private/home/yashs/miniconda3/etc/profile.d/conda.sh
-conda activate perception_models_eval
-cd /private/home/yashs/projects/perception_models/
+source /home/yashs/miniconda3/etc/profile.d/conda.sh
+conda activate perception_models
+cd /home/yashs/projects/perception_models
 echo "conda activated and slurm script working"
 
 export OMP_NUM_THREADS=1
 export NCCL_TIMEOUT=120
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export TORCH_USE_CUDA_DSA=1
 export CUDA_LAUNCH_BLOCKING=1
+export LD_PRELOAD=/usr/local/cuda-12.4/lib/libnccl.so 
+export LD_LIBRARY_PATH=/opt/aws-ofi-nccl/lib/:$LD_LIBRARY_PATH
 
 
-# CHECKPOINTS_PATH=/checkpoint/yashs/logs/plm/plm_1b_stage2_instruct/checkpoints/0000004000
-CHECKPOINTS_PATH=/checkpoint/yashs/logs/plm/plm_1b_stage2/checkpoints/0000004000 
+CHECKPOINTS_PATH=/fsx-checkpoints/yashs/plm/plm_1b_cambrian7M_stage2/checkpoints/0000009500/
 # SELECTED_TASK="docvqa,chartqa,textvqa,infovqa,ai2d_no_mask,ok_vqa,vizwiz_vqa,mme,realworldqa,pope,mmmu,ocrbench,coco_karpathy_val,nocaps,vqav2_val"
 SELECTED_TASK="realworldqa,mmmu"
-OUTPUT_PATH=/private/home/yashs/projects/perception_models/eval_results/working_trial1/
+OUTPUT_PATH=/private/home/yashs/projects/perception_models/eval_results/aws_large_lr/
 
 echo "checkpoint path: $CHECKPOINTS_PATH"
 echo "selected task: $SELECTED_TASK"

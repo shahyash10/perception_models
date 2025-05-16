@@ -28,7 +28,6 @@ export OMP_NUM_THREADS=1
 export MASTER_ADDR=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
 export MASTER_PORT=29500 
 export NCCL_TIMEOUT=120
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export LD_PRELOAD=/usr/local/cuda-12.4/lib/libnccl.so 
 export LD_LIBRARY_PATH=/opt/aws-ofi-nccl/lib/:$LD_LIBRARY_PATH
 
