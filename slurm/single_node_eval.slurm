@@ -33,7 +33,7 @@ export LD_LIBRARY_PATH=/opt/aws-ofi-nccl/lib/:$LD_LIBRARY_PATH
 CHECKPOINTS_PATH=/fsx-checkpoints/yashs/plm/plm_1b_cambrian7M_stage2/checkpoints/0000009500/
 # SELECTED_TASK="docvqa,chartqa,textvqa,infovqa,ai2d_no_mask,ok_vqa,vizwiz_vqa,mme,realworldqa,pope,mmmu,ocrbench,coco_karpathy_val,nocaps,vqav2_val"
 SELECTED_TASK="realworldqa,mmmu"
-OUTPUT_PATH=/private/home/yashs/projects/perception_models/eval_results/aws_large_lr/
+OUTPUT_PATH=/home/yashs/projects/perception_models/eval_results/aws_large_lr/
 
 echo "checkpoint path: $CHECKPOINTS_PATH"
 echo "selected task: $SELECTED_TASK"
@@ -48,4 +48,4 @@ accelerate launch --num_processes=8 \
 --output_path $OUTPUT_PATH \
 --verbosity DEBUG
 conda deactivate
-echo "finished training"
+echo "finished evaluations"
