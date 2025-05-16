@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## partition name
-#SBATCH --partition=learnfair
+## --partition=learnfair
 ## number of nodes
 #SBATCH --nodes=4
 #SBATCH --gpus-per-node=8
@@ -12,8 +12,8 @@
 
 #SBATCH --time=72:00:00
 
-#SBATCH --output=./logs/%x/eval-%x-%j.out
-#SBATCH --error=./logs/%x/eval-%x-%j.err
+#SBATCH --output=./logs/%x/%x-%j.out
+#SBATCH --error=./logs/%x/%x-%j.err
 #SBATCH --export=ALL
 #SBATCH --mail-type=FAIL
 
