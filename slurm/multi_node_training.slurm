@@ -3,7 +3,7 @@
 ## partition name
 ## --partition=learnlab,devlab
 ## number of nodes
-#SBATCH --nodes=8 
+#SBATCH --nodes=16 
 #SBATCH --gpus-per-node=8
 ## number of tasks per node
 #SBATCH --ntasks-per-node=1
