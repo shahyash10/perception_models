@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## partition name
-#SBATCH --partition=learnlab,devlab
+## --partition=learnlab,devlab
 ## number of nodes
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node=8
@@ -12,29 +12,28 @@
 
 #SBATCH --time=72:00:00
 
-#SBATCH --output=./logs/%x/eval-%x-%j.out
-#SBATCH --error=./logs/%x/eval-%x-%j.err
+#SBATCH --output=./logs/%x/%x-%j.out
+#SBATCH --error=./logs/%x/%x-%j.err
 #SBATCH --export=ALL
 #SBATCH --mail-type=FAIL
 
-source /private/home/yashs/miniconda3/etc/profile.d/conda.sh
-conda activate perception_models_eval
-cd /private/home/yashs/projects/perception_models/
+source /home/yashs/miniconda3/etc/profile.d/conda.sh
+conda activate perception_models
+cd /home/yashs/projects/perception_models
 echo "conda activated and slurm script working"
 
 export OMP_NUM_THREADS=1
 export NCCL_TIMEOUT=120
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export TORCH_USE_CUDA_DSA=1
 export CUDA_LAUNCH_BLOCKING=1
+export LD_PRELOAD=/usr/local/cuda-12.4/lib/libnccl.so 
+export LD_LIBRARY_PATH=/opt/aws-ofi-nccl/lib/:$LD_LIBRARY_PATH
 
 
-# CHECKPOINTS_PATH=/checkpoint/yashs/logs/plm/plm_1b_stage2_instruct/checkpoints/0000004000
-CHECKPOINTS_PATH=/checkpoint/yashs/logs/plm/plm_1b_stage2/checkpoints/0000004000 
-# SELECTED_TASK="docvqa,chartqa,textvqa,infovqa,ai2d_no_mask,ok_vqa,vizwiz_vqa,mme,realworldqa,pope,mmmu,ocrbench,coco_karpathy_val,nocaps,vqav2_val"
-SELECTED_TASK="realworldqa,mmmu"
-OUTPUT_PATH=/private/home/yashs/projects/perception_models/eval_results/working_trial1/
-
+CHECKPOINTS_PATH=/fsx-checkpoints/yashs/plm/plm_1b_cambrian7M_stage2_512/checkpoints/0000020000/
+# SELECTED_TASK="docvqa,chartqa,textvqa,infovqa,ai2d_no_mask,ok_vqa,vizwiz_vqa,mme,pope,ocrbench,coco_karpathy_val,nocaps,vqav2_val"
+SELECTED_TASK="docvqa,chartqa,ocrbench,vqav2_val,ok_vqa,vizwiz_vqa,mme,pope,mmbench_en_dev"
+OUTPUT_PATH=/fsx-checkpoints/yashs/plm/eval_results/cambrian_7M_20k_mmbench_en_dev/
 echo "checkpoint path: $CHECKPOINTS_PATH"
 echo "selected task: $SELECTED_TASK"
 accelerate launch --num_processes=8 \
@@ -48,4 +47,4 @@ accelerate launch --num_processes=8 \
 --output_path $OUTPUT_PATH \
 --verbosity DEBUG
 conda deactivate
-echo "finished training"
+echo "finished evaluations"

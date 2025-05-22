@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## partition name
-#SBATCH --partition=learnfair
+## --partition=learnfair
 ## number of nodes
 #SBATCH --nodes=4
 #SBATCH --gpus-per-node=8
@@ -12,8 +12,8 @@
 
 #SBATCH --time=72:00:00
 
-#SBATCH --output=./logs/%x/eval-%x-%j.out
-#SBATCH --error=./logs/%x/eval-%x-%j.err
+#SBATCH --output=./logs/%x/%x-%j.out
+#SBATCH --error=./logs/%x/%x-%j.err
 #SBATCH --export=ALL
 #SBATCH --mail-type=FAIL
 
@@ -31,7 +31,7 @@ export CUDA_LAUNCH_BLOCKING=1
 
 CHECKPOINTS_PATH=/checkpoint/yashs/logs/plm/plm_1b_stage2/checkpoints/0000004000
 SELECTED_TASK="docvqa,chartqa,textvqa,infovqa,ai2d_no_mask,ok_vqa,vizwiz_vqa,mme,realworldqa,pope,mmmu,ocrbench,coco_karpathy_val,nocaps,vqav2_val"
-OUTPUT_PATH=/private/home/yashs/projects/perception_models/eval_results/trial1/
+OUTPUT_PATH=/home/yashs/projects/perception_models/eval_results/aws_large_lr/
 
 head_node_ip=$(scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1)
 
@@ -52,4 +52,4 @@ srun accelerate launch \
 --verbosity DEBUG
 
 conda deactivate
-echo "finished training
+echo "finished evaluations"

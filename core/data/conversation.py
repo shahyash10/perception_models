@@ -84,7 +84,8 @@ class Conversation:
                 conv_text += self.pre_question + conv["value"] + self.sep_question
                 conv_dict = {"user": conv_text}
                 is_first = False
-            elif conv["from"] == "assistant":
+            elif conv["from"] == "assistant" or conv["from"] == "gpt":
+                conv["from"] = "assistant"
                 conv_text = self.pre_answer + str(conv["value"]) + self.sep_answer
                 conv_dict.update({"assistant": conv_text})
                 conv_dict_list.append(conv_dict)
