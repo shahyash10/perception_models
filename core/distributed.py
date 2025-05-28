@@ -479,7 +479,7 @@ def parallelize_model(
                 layer_id,
                 resblock,
             ) in model.vision_model.transformer.resblocks.named_children():
-                resblock = checkpoint_wrapper(resblock, preserve_rng_state=False)
+                resblock = checkpoint_wrapper(resblock, preserve_rng_state=True)
                 model.vision_model.transformer.resblocks.register_module(
                     layer_id, resblock
                 )
