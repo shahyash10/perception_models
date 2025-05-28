@@ -15,14 +15,14 @@ from typing import Any
 
 from omegaconf import MISSING, OmegaConf
 
-from amaia.cluster.detect import ClusterType, detect_amaia_group, detect_cluster
-from amaia.cluster.slurm import (
+from launchers.stool.detect import ClusterType, detect_amaia_group, detect_cluster
+from launchers.stool.slurm import (
     get_slurm_account,
     get_slurm_mem,
     get_slurm_partition,
     get_slurm_qos,
+    dataclass_from_dict
 )
-from amaia.common.params import dataclass_from_dict
 from launchers.stool.utils import (
     check_conda,
     check_is_slurm_job,
