@@ -21,7 +21,7 @@
 source /home/yashs/miniconda3/etc/profile.d/conda.sh
 conda activate perception_models
 cd /home/yashs/projects/perception_models
-echo "conda activated and slurm script working - Stage 2 General"
+echo "conda activated and slurm script working"
 
 echo "about to run on $SLURM_JOB_NUM_NODES nodes"
 export OMP_NUM_THREADS=1
