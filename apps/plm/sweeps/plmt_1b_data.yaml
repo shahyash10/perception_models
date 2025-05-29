@@ -62,16 +62,17 @@ data:
     max_num_tiles: 16
     max_video_frames: 16
     vision_input_type: thumb+tile
-    tokenizer_path: facebook/Perception-LM-1B/tokenizer.model
+    tokenizer_path: /fsx-checkpoints/ngjhn/cache/models--facebook--Perception-LM-1B/snapshots/3441252f0e0ee5690b1d4409de4bcf9fb39304af/tokenizer.model
     tokenizer_name: plmchat
     conversation_format: plm_sft
 
 sweep:
-    datamix: [
-      "Cambrian7M-Shuffled:1.0",
-      "Cambrian7M-Shuffled_Science:1.0,Cambrian7M-Shuffled_Code:1.0,Cambrian7M-Shuffled_Counting:1.0,Cambrian7M-Shuffled_General:1.0,Cambrian7M-Shuffled_Math:1.0,Cambrian7M-Shuffled_Ocr:1.0",
-      "Cambrian7M-Shuffled_General:1.0", 
-      "Cambrian7M-Shuffled_Math:1.0,Cambrian7M-Shuffled_Ocr:1.0,Cambrian7M-Shuffled_Counting:1.0"
+    data: 
+        datamix: [
+        "Cambrian7M-Shuffled:1.0",
+        "Cambrian7M-Science:1.0,Cambrian7M-Code:1.0,Cambrian7M-Counting:1.0,Cambrian7M-General:1.0,Cambrian7M-Math:1.0,Cambrian7M-OCR:1.0",
+        "Cambrian7M-General:1.0", 
+        "Cambrian7M-Math:1.0,Cambrian7M-OCR:1.0,Cambrian7M-Counting:1.0"
     ]
 
 profiling:
