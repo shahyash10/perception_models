@@ -56,3 +56,31 @@ Cambrian10M-Shuffled:
 Cambrian7M-Shuffled:
     annotation: /fsx-checkpoints/yashs/datasets/Cambrian-10M/jsons/Cambrian7M_shuffled.jsonl
     root_dir: /fsx-checkpoints/yashs/datasets/Cambrian-10M/
+
+Cambrian7M-Code:
+    annotation: /fsx-checkpoints/yashs/datasets/Cambrian-10M/jsons/7M_by_category/code.jsonl
+    root_dir: /fsx-checkpoints/yashs/datasets/Cambrian-10M/
+
+Cambrian7M-Counting:
+    annotation: /fsx-checkpoints/yashs/datasets/Cambrian-10M/jsons/7M_by_category/counting.jsonl
+    root_dir: /fsx-checkpoints/yashs/datasets/Cambrian-10M/
+
+Cambrian7M-General:
+    annotation: /fsx-checkpoints/yashs/datasets/Cambrian-10M/jsons/7M_by_category/general.jsonl
+    root_dir: /fsx-checkpoints/yashs/datasets/Cambrian-10M/
+
+Cambrian7M-Language:
+    annotation: /fsx-checkpoints/yashs/datasets/Cambrian-10M/jsons/7M_by_category/language.jsonl
+    root_dir: /fsx-checkpoints/yashs/datasets/Cambrian-10M/
+
+Cambrian7M-Math:
+    annotation: /fsx-checkpoints/yashs/datasets/Cambrian-10M/jsons/7M_by_category/math.jsonl
+    root_dir: /fsx-checkpoints/yashs/datasets/Cambrian-10M/
+
+Cambrian7M-OCR:
+    annotation: /fsx-checkpoints/yashs/datasets/Cambrian-10M/jsons/7M_by_category/ocr.jsonl
+    root_dir: /fsx-checkpoints/yashs/datasets/Cambrian-10M/
+
+Cambrian7M-Science:
+    annotation: /fsx-checkpoints/yashs/datasets/Cambrian-10M/jsons/7M_by_category/science.jsonl
+    root_dir: /fsx-checkpoints/yashs/datasets/Cambrian-10M/

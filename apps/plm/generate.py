@@ -21,8 +21,13 @@ from apps.plm.tokenizer import PLMTokenizer, Tokenizer, build_tokenizer
 from apps.plm.transformer import LMTransformer, LMTransformerArgs
 from core.args import dataclass_from_dict
 from core.checkpoint import load_consolidated_checkpoint
-from core.transformer import (Attention, causal_mask, generate_doc_mask_mod,
-                              lengths_to_local_ids, lengths_to_start_ids)
+from core.transformer import (
+    Attention,
+    causal_mask,
+    generate_doc_mask_mod,
+    lengths_to_local_ids,
+    lengths_to_start_ids,
+)
 from core.transforms.image_transform import get_image_transform
 from core.transforms.video_transform import get_video_transform
 
@@ -438,7 +443,6 @@ class PackedCausalTransformerGenerator:
 
             current_token = start_token
             for i in range(1, self.max_gen_len):
-
                 next_logits = self.generate_next_token(current_token)
                 next_token = sample_tokens(
                     next_logits.clone(), self.temperature, self.top_p, self.top_k
@@ -480,7 +484,7 @@ class PackedCausalTransformerGenerator:
         return generation, loglikelihood, greedy
 
 
-def load_consolidated_model_and_tokenizer(ckpt):
+def load_consolidated_model_and_tokenizer(ckpt, tokenizer_path=None):
     # Download the model from Hugging Face if not available locally.
     if os.path.exists(ckpt):
         ckpt_path = ckpt  # It's a local path
@@ -504,7 +508,7 @@ def load_consolidated_model_and_tokenizer(ckpt):
         (
             config.data.tokenizer_path
             if os.path.exists(config.data.tokenizer_path)
-            else os.path.join(ckpt_path, config.data.tokenizer_path)
+            else tokenizer_path
         ),
         pooling_ratio=config.model.pooling_ratio,
         patch_size=config.model.vision_model.patch_size,
@@ -572,7 +576,7 @@ def main(args):
         tokens_per_second = total_tokens / (end_time - start_time)
 
         print("==============================================")
-        print(f"\nPrompt {i+1}: {prompts[i][0]}")
+        print(f"\nPrompt {i + 1}: {prompts[i][0]}")
         print(f"Generated Text: {gen}")
         print(f"Tokens per second: {tokens_per_second:.2f}")
         print("==============================================")

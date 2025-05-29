@@ -8,4 +8,7 @@ data-gym-cache/*
 torchinductor_*/*
 tmp*/*
 apps/plm/dummy_datasets
-lmms-eval/
+*.egg-info
+logs
+facebook
+meta-llama
