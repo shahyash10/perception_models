@@ -30,10 +30,10 @@ export LD_PRELOAD=/usr/local/cuda-12.4/lib/libnccl.so
 export LD_LIBRARY_PATH=/opt/aws-ofi-nccl/lib/:$LD_LIBRARY_PATH
 
 
-CHECKPOINTS_PATH=/fsx-checkpoints/yashs/plm/plm_1b_cambrian7M_stage2_512/checkpoints/0000020000/
+CHECKPOINTS_PATH=/fsx-checkpoints/yashs/plm/plm_1b_cambrian_stage1_shuffled/checkpoints/0000008000/
 # SELECTED_TASK="docvqa,chartqa,textvqa,infovqa,ai2d_no_mask,ok_vqa,vizwiz_vqa,mme,pope,ocrbench,coco_karpathy_val,nocaps,vqav2_val"
-SELECTED_TASK="docvqa,chartqa,ocrbench,vqav2_val,ok_vqa,vizwiz_vqa,mme,pope,mmbench_en_dev"
-OUTPUT_PATH=/fsx-checkpoints/yashs/plm/eval_results/cambrian_7M_20k_mmbench_en_dev/
+SELECTED_TASK="mmmu,docvqa,chartqa,ocrbench,realworldqa,mme,mmbench_en_dev,ok_vqa,vizwiz_vqa,vqav2_val"
+OUTPUT_PATH=/fsx-checkpoints/yashs/plm/eval_results/7M_stage1_checkpoint/
 echo "checkpoint path: $CHECKPOINTS_PATH"
 echo "selected task: $SELECTED_TASK"
 accelerate launch --num_processes=8 \
