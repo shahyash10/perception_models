@@ -132,7 +132,7 @@ def copy_dir(input_dir: str, output_dir: str) -> None:
     user, group = get_user_group(Path(output_dir).parent)
     rsync_cmd = (
         f"rsync -ar --chown={user}:{group} --copy-links "
-        f"--exclude='.git/' --filter='dir-merge,- .gitignore' "
+        f"--exclude='.git/' "
         f"--exclude checkpoints "
         f"--exclude notebooks "
         f"--exclude '*notebooks' "

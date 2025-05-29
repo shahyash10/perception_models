@@ -3,7 +3,6 @@
 *.ipynb
 slurm-*.out
 wandb
-data/*
 data-gym-cache/*
 torchinductor_*/*
 tmp*/*
