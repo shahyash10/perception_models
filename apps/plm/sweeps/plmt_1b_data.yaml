@@ -2,11 +2,11 @@
 # For example, one possible configuration is batch_size=8,nodes=32,gpus_per_node=8 = 8*32*8 = 2048 global batch size.
 
 name: "plm_datamixture_sweep"
-dump_dir:  /fsx-checkpoints/ngjhn/plm/datamixture_sweep
+dump_dir:  /fsx-checkpoints/yashs/plm/datamixture_sweep
 steps: 7000
 seed: 777
 optim:
-    lr: 1e-5
+    lr: 2e-5
     warmup: 120
     lr_min_ratio: 0.01
     clip: 1.0
@@ -62,17 +62,16 @@ data:
     max_num_tiles: 16
     max_video_frames: 16
     vision_input_type: thumb+tile
-    tokenizer_path: /fsx-checkpoints/ngjhn/cache/models--facebook--Perception-LM-1B/snapshots/3441252f0e0ee5690b1d4409de4bcf9fb39304af/tokenizer.model
+    tokenizer_path: facebook/Perception-LM-1B/tokenizer.model
     tokenizer_name: plmchat
     conversation_format: plm_sft
 
 sweep:
     data: 
         datamix: [
-        "Cambrian7M-Shuffled:1.0",
         "Cambrian7M-Science:1.0,Cambrian7M-Code:1.0,Cambrian7M-Counting:1.0,Cambrian7M-General:1.0,Cambrian7M-Math:1.0,Cambrian7M-OCR:1.0",
         "Cambrian7M-General:1.0", 
-        "Cambrian7M-Math:1.0,Cambrian7M-OCR:1.0,Cambrian7M-Counting:1.0"
+        "Cambrian7M-Science:1.0,Cambrian7M-Code:1.0,Cambrian7M-Counting:1.0,Cambrian7M-General:1.0,Cambrian7M-Math:1.0,Cambrian7M-Language:1.0"
     ]
 
 profiling:
@@ -92,7 +91,7 @@ logging:
         project: stage2
         entity: plm
         group: finetune
-        name: plm_1b_cambrian7M_stage2_512
+        name: plm_datamixture_sweep
         tags:
         - plm_1b
         - stage2
