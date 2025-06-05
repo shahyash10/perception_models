@@ -9,7 +9,7 @@
 #SBATCH --ntasks-per-node=8
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=640GB
-
+#SBATCH --account=memorization
 #SBATCH --time=72:00:00
 
 #SBATCH --output=./logs/%x/%x-%j.out
@@ -30,10 +30,10 @@ export LD_PRELOAD=/usr/local/cuda-12.4/lib/libnccl.so
 export LD_LIBRARY_PATH=/opt/aws-ofi-nccl/lib/:$LD_LIBRARY_PATH
 
 
-CHECKPOINTS_PATH=/fsx-checkpoints/yashs/plm/plm_1b_cambrian_stage1_shuffled/checkpoints/0000008000/
+CHECKPOINTS_PATH=/fsx-checkpoints/yashs/dumps/naive_baselines/naive_baselines_run001/checkpoints/0000007000/
 # SELECTED_TASK="docvqa,chartqa,textvqa,infovqa,ai2d_no_mask,ok_vqa,vizwiz_vqa,mme,pope,ocrbench,coco_karpathy_val,nocaps,vqav2_val"
 SELECTED_TASK="mmmu,docvqa,chartqa,ocrbench,realworldqa,mme,mmbench_en_dev,ok_vqa,vizwiz_vqa,vqav2_val"
-OUTPUT_PATH=/fsx-checkpoints/yashs/plm/eval_results/7M_stage1_checkpoint/
+OUTPUT_PATH=/fsx-checkpoints/yashs/plm/eval_results/naive_baselines_run001/
 echo "checkpoint path: $CHECKPOINTS_PATH"
 echo "selected task: $SELECTED_TASK"
 accelerate launch --num_processes=8 \
