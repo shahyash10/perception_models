@@ -226,8 +226,14 @@ class LMTransformer(BaseTransformer):
         valid_index_filter = img_indices_L < h_tok.shape[1]
         img_indices_L = img_indices_L[valid_index_filter]
         img_indices_B = img_indices_B[valid_index_filter]
-        h_tok[img_indices_B, img_indices_L] = h_img[non_text_indices].flatten(0, 1)[
-            valid_index_filter
+
+        # Ensure the shapes match before assignment
+        h_img_flat = h_img[non_text_indices].flatten(0, 1)
+        if len(valid_index_filter) > h_img_flat.shape[0]:
+            valid_index_filter = valid_index_filter[:h_img_flat.shape[0]]
+
+        h_tok[img_indices_B[:len(valid_index_filter)], img_indices_L[:len(valid_index_filter)]] = h_img_flat[
+            :len(valid_index_filter)
         ]
         return h_tok
 

@@ -42,7 +42,7 @@ accelerate launch --num_processes=8 \
   --model plm \
   --model_args pretrained=$CHECKPOINTS_PATH \
   --tasks $SELECTED_TASK \
-  --batch_size 1 \
+  --batch_size 4 \
   --log_samples \
   --log_samples_suffix plm \
   --output_path $OUTPUT_PATH \
