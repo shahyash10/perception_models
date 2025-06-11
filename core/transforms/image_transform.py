@@ -26,7 +26,18 @@ def get_image_transform(
     normalize_img: bool = True,
 ) -> Tuple[Callable, int]:
 
-    if vision_input_type == "thumb+tile":
+    if vision_input_type in ["none", None]:
+        class ZeroImageTransform(ImageTransform):
+            def __call__(self, image: Image.Image):
+                # Return a zero tensor with the expected shape
+                # (1, 3, self.size, self.size) to mimic a single image batch
+                zero_tensor = torch.zeros(1, 3, self.size, self.size)
+                return zero_tensor, (self.size, self.size)
+
+        logger.info("Vision input disabled: returning ZeroImageTransform.")
+        transforms = ZeroImageTransform(size=image_res, normalize_img=normalize_img)
+
+    elif vision_input_type == "thumb+tile":
         transforms = VariableSizeImageTransform(
             size=image_res,
             max_num_tiles=max_num_tiles,

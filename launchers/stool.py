@@ -457,13 +457,13 @@ def build_sbatch_command(args: StoolRunArgs) -> str:
     group_env = "" if args.group == "" else f"export AMAIA_GROUP={args.group}"
 
     conda_env_path = args.anaconda
-    if mamba_exe := os.environ.get("MAMBA_EXE"):
-        conda_bash_hook_cmd = f"{mamba_exe} shell hook -s bash"
-        conda_activate_cmd = f"micromamba activate {conda_env_path}"
-    else:
-        conda_exe = os.environ.get("CONDA_EXE", "conda")
-        conda_bash_hook_cmd = f"{conda_exe} shell.bash hook"
-        conda_activate_cmd = f"source activate {conda_env_path}"
+    # if mamba_exe := os.environ.get("MAMBA_EXE"):
+    #     conda_bash_hook_cmd = f"{mamba_exe} shell hook -s bash"
+    #     conda_activate_cmd = f"micromamba activate {conda_env_path}"
+    # else:
+    conda_exe = os.environ.get("CONDA_EXE", "conda")
+    conda_bash_hook_cmd = f"{conda_exe} shell.bash hook"
+    conda_activate_cmd = f"source activate {conda_env_path}"
 
     log_output = (
         "-o $DUMP_DIR/%j/%j_%t_log.out -e $DUMP_DIR/%j/%j_%t_log.err"
