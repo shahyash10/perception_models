@@ -44,6 +44,8 @@ def is_number(s):
         return False
 
 def extract_mcq_answer(text):
+    if isinstance(text, list):
+        text = text[0]
     text = text.lower().strip()
     answer_keywords = ["answer is", "answer is:", "answer:"]
     for answer_keyword in answer_keywords:

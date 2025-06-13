@@ -149,7 +149,6 @@ def eval_model(args):
         gt_answer = line["answer"]
 
         input_ids, image_tensor, image_sizes, prompt = dataset[idx]
-        input_ids = input_ids.to(device='cuda', non_blocking=True)
 
         with torch.inference_mode():
             generated_text = generator.generate(

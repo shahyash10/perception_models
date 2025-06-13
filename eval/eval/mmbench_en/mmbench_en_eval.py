@@ -73,7 +73,7 @@ def process(line, args, tokenizer, image_processor, model_config):
 
     input_ids = tokenizer_image_token(structured_conversation, tokenizer, IMAGE_TOKEN_INDEX, return_tensors='pt').unsqueeze(0).cuda()
 
-    return input_ids, image_tensor, image_size, image_hash
+    return input_ids, image_tensor, image_size, image_hash, structured_conversation
 
 
 def eval_model(args):
@@ -129,13 +129,14 @@ def eval_model(args):
             if idx<valid_chunk[0] or idx>valid_chunk[1]:
                 continue
             
-            input_ids, image_tensor, image_sizes, image_hash = process(line, args, tokenizer, image_processor, model.config)
+            input_ids, image_tensor, image_sizes, image_hash, prompt = process(line, args, tokenizer, image_processor, model.config)
             gt_answer = line["answer"]
             category = line["category"]
             l2_category = line["l2-category"]
             input_ids = input_ids.to(device='cuda', non_blocking=True)
             with torch.inference_mode():
-                generated_text = generator.generate(input_ids)[0]
+                generated_text = generator.generate(
+                    [(prompt[0]["content"], image_tensor)] if image_tensor is not None else [(prompt[0]["content"], None)])[0]
             if isinstance(generated_text, list):
                 generated_text = generated_text[0]
                 

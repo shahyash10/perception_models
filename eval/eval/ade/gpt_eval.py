@@ -92,7 +92,7 @@ def eval_model(args):
         ans_file.write(json.dumps({
             "questionId": idx,
             "prompt": line["prompt"],
-            "answer": outputs,
+            "answer":generated_text
             "gt_answer": line["answer"],
             "category": line["sub_task"],
             "options": line["choices"],

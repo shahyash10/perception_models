@@ -21,6 +21,8 @@ def add_data_to_csv(file_path, data):
 
 
 def extract_single_answer(text):
+    if isinstance(text, list):
+        text = text[0]
     text = text.lower().strip()
     answer_keywords = ["answer is", "answer is:", "answer:"]
     for answer_keyword in answer_keywords:

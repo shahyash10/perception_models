@@ -117,7 +117,7 @@ def eval_model(args):
         if idx<valid_chunk[0] or idx>valid_chunk[1]:
             continue
         
-        input_ids, image_tensor, image_sizes = process(line, args, tokenizer, image_processor, model.config)
+        input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, model.config)
         if input_ids is None:
             continue
         
@@ -130,7 +130,9 @@ def eval_model(args):
             gt_answer = reverse_dict[gt_answer]
         input_ids = input_ids.to(device='cuda', non_blocking=True)
         with torch.inference_mode():
-            generated_text = generator.generate(input_ids)[0]
+            generated_text = generator.generate(
+                [(prompt[0]["content"], image_tensor)] if image_tensor is not None else [(prompt[0]["content"], None)]
+            )[0]
         if isinstance(generated_text, list):
             generated_text = generated_text[0]
         ans_file.write(json.dumps({"model_id":args.model_path,

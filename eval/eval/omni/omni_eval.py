@@ -1,4 +1,7 @@
+import math
+
 import argparse
+
 import os
 import json
 import random
@@ -6,18 +9,18 @@ import re
 import torch
 import numpy as np
 from tqdm import tqdm
-import shortuuid
-
 from datasets import load_dataset, concatenate_datasets
-from cambrian.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
-from cambrian.conversation import conv_templates, SeparatorStyle
-from cambrian.model.builder import load_pretrained_model
-from cambrian.utils import disable_torch_init
-from cambrian.mm_utils import tokenizer_image_token, process_images, get_model_name_from_path
+from apps.plm.generate import (
+    PackedCausalTransformerGenerator,
+    PackedCausalTransformerGeneratorArgs,
+    load_consolidated_model_and_tokenizer,
+)
 from torch.utils.data import Dataset, DataLoader
 
-from PIL import Image
+from core.transforms.image_transform import get_image_transform
 import math
+from apps.plm.cambrian_eval_utils import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN,conv_llama_3, tokenizer_image_token
+from PIL import Image
 
 
 def split_list(lst, n):
@@ -38,15 +41,17 @@ def process(line, args, tokenizer, image_processor, model_config):
     img_path = args.images_path + img_path
 
     if line["image_name"] is not None:
-        if model_config.mm_use_im_start_end:
-            qs = DEFAULT_IM_START_TOKEN + DEFAULT_IMAGE_TOKEN + DEFAULT_IM_END_TOKEN + '\n' + qs
-        else:
-            qs = DEFAULT_IMAGE_TOKEN + '\n' + qs
+        qs = DEFAULT_IMAGE_TOKEN + '\n' + qs
 
-    conv = conv_templates[args.conv_mode].copy()
+    # Use the conv_llama_3 template
+    conv = conv_llama_3.copy()
     conv.append_message(conv.roles[0], qs)
     conv.append_message(conv.roles[1], None)
-    prompt = conv.get_prompt()
+
+    structured_conversation = [
+        {"role": conv.roles[0], "content": qs},
+        {"role": conv.roles[1], "content": None}
+    ]
     if line["image_name"] is None:
         image = None
         image_size = None
@@ -54,11 +59,12 @@ def process(line, args, tokenizer, image_processor, model_config):
     else:
         image = Image.open(img_path).convert('RGB')
         image_size = [image.size]
-        image_tensor = process_images([image], image_processor, model_config)
+        image_tensor, _ = image_processor(image)
 
-    input_ids = tokenizer_image_token(prompt, tokenizer, IMAGE_TOKEN_INDEX, return_tensors='pt').unsqueeze(0).cuda()
+    input_ids = tokenizer_image_token(structured_conversation, tokenizer, IMAGE_TOKEN_INDEX, return_tensors='pt').unsqueeze(0).cuda()
 
-    return input_ids, image_tensor, image_size, prompt
+    return input_ids, image_tensor, image_size, structured_conversation
+
 
 
 def eval_model(args):
@@ -70,10 +76,27 @@ def eval_model(args):
 
     # Model
     # disable_torch_init()  # DO NOT ENABLE THIS: KILLS PERFORMANCE
-    model_path = os.path.expanduser(args.model_path)
-    model_name = get_model_name_from_path(model_path)
-    tokenizer, model, image_processor, context_len = load_pretrained_model(model_path, args.model_base, model_name)
+    print(f"Using model path: {args.model_path}")
+    # Load model, tokenizer, and config
+    model, tokenizer, config = load_consolidated_model_and_tokenizer(
+        args.model_path,
+        tokenizer_path="/home/yashs/projects/perception_models/facebook/Perception-LM-1B/tokenizer.model"
+    )
 
+    # Wrap the model with PackedCausalTransformerGenerator
+    gen_cfg = PackedCausalTransformerGeneratorArgs(
+        temperature=args.temperature,
+        top_p=args.top_p,
+        max_gen_len=args.max_new_tokens,
+    )
+    generator = PackedCausalTransformerGenerator(gen_cfg, model, tokenizer)
+
+    # Image processor
+    image_processor = get_image_transform(
+        vision_input_type=config.data.vision_input_type,
+        image_res=config.model.vision_model.image_size,
+        max_num_tiles=config.data.max_num_tiles,
+    )
     questions = []
     with open(args.prompt_path, 'r') as file:
         questions = json.load(file)
@@ -102,27 +125,19 @@ def eval_model(args):
         input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, model.config)
         input_ids = input_ids.to(device='cuda', non_blocking=True)
         with torch.inference_mode():
-            output_ids = model.generate(
-                input_ids,
-                images=image_tensor,
-                image_sizes=image_sizes,
-                do_sample=True if args.temperature > 0 else False,
-                temperature=args.temperature,
-                top_p=args.top_p,
-                num_beams=args.num_beams,
-                max_new_tokens=args.max_new_tokens,
-                use_cache=True)
-
-        outputs = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0].strip()
-
+            generated_text = generator.generate(
+                [(prompt[0]["content"], image_tensor)] if image_tensor is not None else [(prompt[0]["content"], None)]
+            )[0]
+        if isinstance(generated_text, list):
+            generated_text = generated_text[0]
         ans_file.write(json.dumps({
             "questionId": idx,
             "prompt": prompt,
-            "answer": outputs,
+            "answer":generated_text,
             "gt_answer": line["answer"],
             "category": line["sub_task"],
             "options": line["choices"],
-            "model_id": model_name
+            "model_id": args.model_path
         }) + "\n")
         ans_file.flush()
     ans_file.close()
