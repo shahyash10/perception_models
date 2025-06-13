@@ -89,7 +89,7 @@ def eval_model(args):
         max_num_tiles=config.data.max_num_tiles,
     )
     # SaiCharithaAkula21/benchmark_ade_filtered1
-    questions = load_dataset("SaiCharithaAkula21/benchmark_ade_manual", split="train")
+    questions = load_dataset("/fsx-checkpoints/yashs/datasets/hf_data/benchmark_ade_manual", split="train")
 
     answers_file = os.path.expanduser(args.answers_file)
     if not answers_file.endswith(".jsonl"):

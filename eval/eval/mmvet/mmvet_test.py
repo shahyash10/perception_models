@@ -33,7 +33,7 @@ def compute_metrics(jsonl_file, csv_file, extra_outdir=None):
             model = data.get("model_id", '')
             test_list[questionId] = answer  # note: non-int question id
 
-    file_path = f"./answers/{model}_mmvet_submission.json"
+    file_path = f"./answers/_mmvet_submission.json"
     with open(file_path, "w") as json_file:
         json.dump(test_list, json_file)
     combined_data = {

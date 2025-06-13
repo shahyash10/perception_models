@@ -35,7 +35,7 @@ def compute_metrics(jsonl_file, csv_file, extra_outdir=None):
                 "question_id": int(questionId),
                 "answer": answer
             })
-    file_path = f"./answers/{model}_stvqa_submission.json"
+    file_path = "./answers/stvqa_submission.json"
     with open(file_path, "w") as json_file:
         json.dump(test_list, json_file)
     combined_data = {
