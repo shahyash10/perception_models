@@ -75,7 +75,7 @@ class CustomDataset(Dataset):
             image_size = [image.size]
             image_tensor, _ = image_processor(image)
 
-        input_ids = tokenizer_image_token(structured_conversation, tokenizer, IMAGE_TOKEN_INDEX, return_tensors='pt').unsqueeze(0).cuda()
+        input_ids = tokenizer_image_token(structured_conversation, self.tokenizer, IMAGE_TOKEN_INDEX, return_tensors='pt').unsqueeze(0).cuda()
 
         return input_ids, image_tensor, image_size, structured_conversation
 

@@ -32,6 +32,10 @@ def is_inflection(word1, word2):
     Returns:
         True if the words are likely inflections, False otherwise.
     """
+    if isinstance(word1, list):
+        word1 = word1[0]
+    if isinstance(word2, list):
+        word2 = word2[0]
     # Lowercase both words for case-insensitive comparison
     word1 = word1.lower()
     word2 = word2.lower()
