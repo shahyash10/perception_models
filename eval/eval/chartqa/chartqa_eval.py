@@ -85,7 +85,14 @@ def eval_model(args):
         image_res=config.model.vision_model.image_size,
         max_num_tiles=config.data.max_num_tiles,
     )
-    
+    # Wrap the model with PackedCausalTransformerGenerator
+    gen_cfg = PackedCausalTransformerGeneratorArgs(
+        temperature=args.temperature,
+        top_p=args.top_p,
+        max_gen_len=args.max_new_tokens,
+    )
+    generator = PackedCausalTransformerGenerator(gen_cfg, model, tokenizer)
+
     answers_file = os.path.expanduser(args.answers_file)
     if not answers_file.endswith(".jsonl"):
         raise ValueError("Answers file must be a jsonl file")
@@ -107,28 +114,22 @@ def eval_model(args):
         if idx<valid_chunk[0] or idx>valid_chunk[1]:
             continue
         
-        input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, model.config)
+        input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, config)
         gt_answer = line["answer"]
         category = line["type"]
         input_ids = input_ids.to(device='cuda', non_blocking=True)
         with torch.inference_mode():
-            output_ids = model.generate(
-                input_ids,
-                images=image_tensor,
-                image_sizes=image_sizes,
-                do_sample=True if args.temperature > 0 else False,
-                temperature=args.temperature,
-                top_p=args.top_p,
-                num_beams=args.num_beams,
-                max_new_tokens=args.max_new_tokens,
-                use_cache=True)
+            generated_text = generator.generate(
+                [(prompt[0]["content"], image_tensor)] if image_tensor is not None else [(prompt[0]["content"], None)]
+            )[0]
+        if isinstance(generated_text, list):
+            generated_text = generated_text[0]
 
-        outputs = tokenizer.batch_decode(output_ids, skip_special_tokens=True)[0].strip()
 
         ans_file.write(json.dumps({
             "question_id": idx,
             "prompt": prompt,
-            "answer": outputs,
+            "answer": generated_text,
             "gt_answer": gt_answer,
             "category": category,
             "model_id":args.model_path

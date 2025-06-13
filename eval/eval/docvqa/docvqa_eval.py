@@ -1,21 +1,22 @@
 import argparse
-
 import os
 import json
 import random
-import re
 import torch
 import numpy as np
 from tqdm import tqdm
-from datasets import load_dataset, concatenate_datasets
+
+from datasets import load_dataset
+
+from core.transforms.image_transform import get_image_transform
+import math
+from apps.plm.cambrian_eval_utils import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, conv_llama_3, tokenizer_image_token
 from apps.plm.generate import (
     PackedCausalTransformerGenerator,
     PackedCausalTransformerGeneratorArgs,
     load_consolidated_model_and_tokenizer,
 )
-from core.transforms.image_transform import get_image_transform
 import math
-from apps.plm.cambrian_eval_utils import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN,conv_llama_3, tokenizer_image_token
 
 
 def split_list(lst, n):
@@ -25,48 +26,30 @@ def split_list(lst, n):
 
 
 def get_chunk(lst, n, k):
-    # get kth chunk out of n chunks cut from lst length
     chunks = split_list(lst, n)
     return chunks[k]
 
+
 def process(line, args, tokenizer, image_processor, model_config):
     qs = line["question"]
-
-    # Handle multiple-choice questions
-    if line["question_type"] == "multiple-choice":
-        qs += " Options:"
-        options = re.findall(r"'(.*?)'", line["options"])
-        for i in range(len(options)):
-            option = options[i]
-            qs += f"\n{chr(ord('A')+i)}. {option}"
-        qs += f"\n{args.question_extension}"
-    else:
-        qs += f"\nAnswer the question using a single word or phrase."
-
-    # Add image token if an image is present
-    if line["image_1"] is not None:
+    qs += f"\n{args.question_extension}"
+    
+    if line["image"] is not None:
         qs = DEFAULT_IMAGE_TOKEN + '\n' + qs
 
-    # Remove <image \d> tags
-    qs = re.sub(r'<image \d+>', '', qs).strip()
-
-    # Use the conv_llama_3 template
     conv = conv_llama_3.copy()
     conv.append_message(conv.roles[0], qs)
     conv.append_message(conv.roles[1], None)
-
     structured_conversation = [
         {"role": conv.roles[0], "content": qs},
         {"role": conv.roles[1], "content": None}
     ]
-
-    # Handle image processing
-    if line["image_1"] is None:
+    if line["image"] is None:
         image = None
         image_size = None
         image_tensor = None
     else:
-        image = line["image_1"].convert('RGB')
+        image = line["image"].convert('RGB')
         image_size = [image.size]
         image_tensor, _ = image_processor(image)
 
@@ -75,19 +58,21 @@ def process(line, args, tokenizer, image_processor, model_config):
     return input_ids, image_tensor, image_size, structured_conversation
 
 
+
 def eval_model(args):
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     random.seed(args.seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
-    print(f"Using model path: {args.model_path}")
-    # Load model, tokenizer, and config
+
+    # Model
+    # disable_torch_init()  # DO NOT ENABLE THIS: KILLS PERFORMANCE
     model, tokenizer, config = load_consolidated_model_and_tokenizer(
         args.model_path,
         tokenizer_path="/home/yashs/projects/perception_models/facebook/Perception-LM-1B/tokenizer.model"
     )
-
+    questions = load_dataset("lmms-lab/DocVQA", "DocVQA", split="test")
     # Wrap the model with PackedCausalTransformerGenerator
     gen_cfg = PackedCausalTransformerGeneratorArgs(
         temperature=args.temperature,
@@ -95,23 +80,12 @@ def eval_model(args):
         max_gen_len=args.max_new_tokens,
     )
     generator = PackedCausalTransformerGenerator(gen_cfg, model, tokenizer)
-
-    # Image processor
     image_processor = get_image_transform(
         vision_input_type=config.data.vision_input_type,
         image_res=config.model.vision_model.image_size,
         max_num_tiles=config.data.max_num_tiles,
     )
 
-    # Dataset
-    validation_dataset = load_dataset("lmms-lab/MMMU", split="validation")
-    questions = concatenate_datasets([validation_dataset])
-
-    # Answer file setup
-    answers_file = os.path.expanduser(args.answers_file)
-    if not answers_file.endswith(".jsonl"):
-        raise ValueError("Answers file must be a jsonl file")
-    os.makedirs(os.path.dirname(answers_file), exist_ok=True)
     answers_file = os.path.expanduser(args.answers_file)
     if not answers_file.endswith(".jsonl"):
         raise ValueError("Answers file must be a jsonl file")
@@ -124,33 +98,29 @@ def eval_model(args):
     os.makedirs(os.path.dirname(chunk_file), exist_ok=True)
 
     ans_file = open(chunk_file, "w")
-    print(f"Answers will be saved to {chunk_file}, {args.answers_file=}")
+
     idx = -1
     valid_chunk = get_chunk(len(questions), args.num_chunks, args.chunk_idx)
-    idx = -1 
-    for line in tqdm(questions):
+    print(valid_chunk)
+    for line in tqdm(questions, total=len(questions)):
         idx = idx+1
         if idx<valid_chunk[0] or idx>valid_chunk[1]:
             continue
+    
         input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, config)
-        if input_ids is None:
-            continue
-        gt_answer = line["answer"]
-        category = line["id"].split('_')[1]
+        input_ids = input_ids.to(device='cuda', non_blocking=True)
         with torch.inference_mode():
             generated_text = generator.generate(
                 [(prompt[0]["content"], image_tensor)] if image_tensor is not None else [(prompt[0]["content"], None)]
             )[0]
         if isinstance(generated_text, list):
             generated_text = generated_text[0]
+
         ans_file.write(json.dumps({
-            "model_id": args.model_path,
-            "question_id": idx,
+            "questionId": line["questionId"],
             "prompt": prompt,
             "answer": generated_text,
-            "gt_answer": gt_answer,
-            "category": category,
-            "type": line["question_type"]
+            "model_id": args.model_path,
         }) + "\n")
         ans_file.flush()
     ans_file.close()
@@ -161,16 +131,15 @@ if __name__ == "__main__":
     parser.add_argument("--model_path", type=str, default="/fsx-checkpoints/yashs/plm/plm_1b_cambrian7M_stage2_1024_baseline1/checkpoints/0000007000/")
     parser.add_argument("--model_base", type=str, default=None)
     parser.add_argument("--answers_file", type=str, default="./answers/answers.jsonl")
-    parser.add_argument("--question_extension", type=str, default="Answer with the option's letter from the given choices directly.")
+    parser.add_argument("--question_extension", type=str, default="Give the short answer directly.")
     parser.add_argument("--conv_mode", type=str, default="llama_3")
     parser.add_argument("--num_chunks", type=int, default=1)
     parser.add_argument("--chunk_idx", type=int, default=0)
     parser.add_argument("--temperature", type=float, default=0)
     parser.add_argument("--top_p", type=float, default=None)
     parser.add_argument("--num_beams", type=int, default=1)
-    parser.add_argument("--max_new_tokens", type=int, default=512)
+    parser.add_argument("--max_new_tokens", type=int, default=128)
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 
     eval_model(args)
-
