@@ -122,7 +122,7 @@ def eval_model(args):
         if idx<valid_chunk[0] or idx>valid_chunk[1]:
             continue
     
-        input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, model.config)
+        input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, config)
         input_ids = input_ids.to(device='cuda', non_blocking=True)
         with torch.inference_mode():
             generated_text = generator.generate(

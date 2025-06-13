@@ -114,7 +114,7 @@ def eval_model(args):
         if idx<valid_chunk[0] or idx>valid_chunk[1]:
             continue
         
-        input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, model.config)
+        input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, config)
         data = json.loads(line["ground_truth"])
         gt_answer = data['gt_parse']['text_sequence']
 

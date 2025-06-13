@@ -122,7 +122,7 @@ def eval_model(args):
             continue
         if idx<valid_chunk[0] or idx>valid_chunk[1]:
             continue
-        input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, model.config)
+        input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, config)
         gt_answer = line["answer"]
         category = line["question_type_id"]
         input_ids = input_ids.to(device='cuda', non_blocking=True)

@@ -129,7 +129,7 @@ def eval_model(args):
             if idx<valid_chunk[0] or idx>valid_chunk[1]:
                 continue
             
-            input_ids, image_tensor, image_sizes, image_hash, prompt = process(line, args, tokenizer, image_processor, model.config)
+            input_ids, image_tensor, image_sizes, image_hash, prompt = process(line, args, tokenizer, image_processor, config)
             gt_answer = line["answer"]
             category = line["category"]
             l2_category = line["l2-category"]
