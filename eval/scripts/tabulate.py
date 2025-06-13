@@ -22,28 +22,28 @@ def tabulate_results(eval_dir, experiment_csv_fname, out_pivot_fname, out_all_re
         'mme',
         'mmbench_en',
         'mmbench_cn',
-        # 'seed',
+        'seed',
         # 'llava_w',
-        # 'mmvet', # submission
+        'mmvet', # submission
         ## Addtl
         'mmmu',
         'mathvista',
         'ai2d',
         'chartqa',
         # 'docvqa', # submission
-        # 'infovqa', # submission
-        # 'stvqa', # submission
+        'infovqa', # submission
+        'stvqa', # submission
         'ocrbench',
         'mmstar',
         'realworldqa',
-        # 'qbench',
+        'qbench',
         'blink',
-        # 'mmvp',
+        'mmvp',
         'vstar',
         'ade',
         # 'omni',
-        'coco'
-        # 'synthdog', # seems broken?
+        'coco',
+        'synthdog',
     ]
 
     evals_col_overrides = {
@@ -85,13 +85,21 @@ def tabulate_results(eval_dir, experiment_csv_fname, out_pivot_fname, out_all_re
                 df["accuracy"] = df["total_accuracy"].apply(lambda x: json.loads(x.replace("'", '"'))["accuracy"])
             else:
                 df["accuracy"] = df[override]
+        elif eval_name == "synthdog":
+            df["accuracy"] = df["accuracy_edit_distance_0"].apply(lambda x: json.loads(x.replace("'", '"'))["accuracy"])
 
         df["eval_name"] = eval_name
 
         df = df.sort_values("time")
         df = df.drop_duplicates("model", keep="last")
 
-        df = df[["time", "eval_name", "model", "accuracy"]]
+        # Ensure required columns exist in the DataFrame
+        required_columns = ["time", "eval_name", "model", "accuracy"]
+        missing_columns = [col for col in required_columns if col not in df.columns]
+        if missing_columns:
+            raise KeyError(f"Missing required columns in {results_path}: {missing_columns}")
+
+        df = df[required_columns]
         dfs.append(df)
 
     all_results = pd.concat(dfs)
@@ -101,8 +109,15 @@ def tabulate_results(eval_dir, experiment_csv_fname, out_pivot_fname, out_all_re
     pivot = all_results.pivot(index="model", columns="eval_name", values="accuracy")
     pivot = pivot[evals_order]
 
-    pivot.to_excel(out_pivot_fname)
-    print(f"Saved csv file pivot to {out_pivot_fname}")
+    # Save pivot table based on file extension
+    if out_pivot_fname.endswith(".csv"):
+        pivot.to_csv(out_pivot_fname)
+    elif out_pivot_fname.endswith(".xlsx"):
+        pivot.to_excel(out_pivot_fname)
+    else:
+        raise ValueError(f"Unsupported file extension for out_pivot_fname: {out_pivot_fname}")
+
+    print(f"Saved pivot table to {out_pivot_fname}")
 
 
 if __name__ == "__main__":
