@@ -63,7 +63,7 @@ def process(line, args, tokenizer, image_processor, model_config):
 
     input_ids = tokenizer_image_token(structured_conversation, tokenizer, IMAGE_TOKEN_INDEX, return_tensors='pt').unsqueeze(0).cuda()
 
-    return input_ids, image_tensor, image_size
+    return input_ids, image_tensor, image_size, structured_conversation
 
 
 

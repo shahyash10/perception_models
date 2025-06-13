@@ -91,7 +91,7 @@ def eval_model(args):
         image_res=config.model.vision_model.image_size,
         max_num_tiles=config.data.max_num_tiles,
     )
-    questions = load_dataset("SaiCharithaAkula21/benchmark_coco_filtered", split="train")
+    questions = load_dataset("SaiCharithaAkula21/benchmark_coco_filtered", split="train", trust_remote_code=True)
 
     answers_file = os.path.expanduser(args.answers_file)
     if not answers_file.endswith(".jsonl"):

@@ -124,7 +124,7 @@ def eval_model(args):
     os.makedirs(os.path.dirname(chunk_file), exist_ok=True)
 
     ans_file = open(chunk_file, "w")
-    dataset = CustomDataset(args, questions, tokenizer, image_processor, model.config)
+    dataset = CustomDataset(args, questions, tokenizer, image_processor, config)
 
     idx = -1
     valid_chunk = get_chunk(len(questions), args.num_chunks, args.chunk_idx)

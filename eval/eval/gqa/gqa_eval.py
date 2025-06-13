@@ -90,6 +90,10 @@ def eval_model(args):
         max_num_tiles=config.data.max_num_tiles,
     )
 
+    images_data = load_dataset("lmms-lab/GQA", "testdev_balanced_images", split="testdev")
+    images = {}
+    for row in images_data:
+        images[row['id']] =  row['image']
     questions = load_dataset("lmms-lab/GQA", "testdev_balanced_instructions", split="testdev")
     
     answers_file = os.path.expanduser(args.answers_file)
@@ -114,7 +118,7 @@ def eval_model(args):
         if idx<valid_chunk[0] or idx>valid_chunk[1]:
             continue
 
-        input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, model.config, images)
+        input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, config, images)
         gt_answer = line["answer"]
         gt_full_answer = line["fullAnswer"]
         category = line["types"]

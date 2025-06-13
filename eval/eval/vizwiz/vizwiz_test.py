@@ -44,7 +44,7 @@ def compute_metrics(jsonl_file, csv_file, extra_outdir=None):
                     "image": image_id,
                     "answer": answer
                 })
-    file_path = f"./answers/{model}_vizwiz_submission.json"
+    file_path = f"./answers/_vizwiz_submission.json"
     with open(file_path, "w") as json_file:
         json.dump(test_list, json_file)
     evaluator = TextVQAAccuracyEvaluator()
@@ -71,5 +71,4 @@ if __name__ == "__main__":
     parser.add_argument("--csv_file", type=str, default="./experiments.csv", help="Path to the output csv file to store the experiment data")
     parser.add_argument("--extra_outdir", type=str, default=None, help="Path to an extra output directory in which to store a copy of the information")
     args = parser.parse_args()
-
     compute_metrics(args.answers_file, args.csv_file, args.extra_outdir)

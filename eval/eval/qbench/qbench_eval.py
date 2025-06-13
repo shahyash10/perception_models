@@ -1,26 +1,25 @@
 import argparse
+
 import os
 import json
 import random
+import re
+import tarfile
 import torch
 import numpy as np
 from tqdm import tqdm
-import shortuuid
-import csv
-import tarfile
-from PIL import Image
+from datasets import load_dataset, concatenate_datasets
+from apps.plm.generate import (
+    PackedCausalTransformerGenerator,
+    PackedCausalTransformerGeneratorArgs,
+    load_consolidated_model_and_tokenizer,
+)
 
-from datasets import load_dataset
-from huggingface_hub import hf_hub_download
-from cambrian.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
-from cambrian.conversation import conv_templates, SeparatorStyle
-from cambrian.model.builder import load_pretrained_model
-from cambrian.utils import disable_torch_init
-from cambrian.mm_utils import tokenizer_image_token, process_images, get_model_name_from_path
-from torch.utils.data import Dataset, DataLoader
-
-from PIL import Image
+from core.transforms.image_transform import get_image_transform
 import math
+from apps.plm.cambrian_eval_utils import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN,conv_llama_3, tokenizer_image_token
+from PIL import Image
+from huggingface_hub import hf_hub_download
 
 def split_list(lst, n):
     """Split a list into n (roughly) equal-sized chunks"""
@@ -64,12 +63,11 @@ def process(line, args, tokenizer, image_processor, model_config, images):
     else:
         image = input_image
         image_size = [image.size]
-        image_tensor = process_images([image], image_processor, model_config)
-    
+        image_tensor, _ = image_processor(image)
 
-    input_ids = tokenizer_image_token(prompt, tokenizer, IMAGE_TOKEN_INDEX, return_tensors='pt').unsqueeze(0).cuda()
+    input_ids = tokenizer_image_token(structured_conversation, tokenizer, IMAGE_TOKEN_INDEX, return_tensors='pt').unsqueeze(0).cuda()
 
-    return input_ids, image_tensor, image_size, prompt
+    return input_ids, image_tensor, image_size, structured_conversation
 
 def give_options(input_string):
     parts = input_string.split("(")
@@ -151,7 +149,7 @@ def eval_model(args):
         if idx<valid_chunk[0] or idx>valid_chunk[1]:
             continue
         
-        input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, model.config, images)
+        input_ids, image_tensor, image_sizes, prompt = process(line, args, tokenizer, image_processor, config, images)
         answer = line["correct_ans"] 
         options = line["candidates"]
         reverse_options = {}
@@ -170,7 +168,7 @@ def eval_model(args):
         ans_file.write(json.dumps({
             "question_id": idx,
             "prompt": prompt,
-            "answer":generated_text
+            "answer":generated_text,
             "gt_answer": gt_answer,
             "type": qn_type,
             "model_id": args.model_path
