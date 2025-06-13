@@ -62,7 +62,23 @@ done
 
 cd $benchmark_dir
 model_basename=$(basename $ckpt)
-answers_file="./answers/answers_${model_basename}.jsonl"
+
+answers_dir="./answers"
+if [[ ! -d "$answers_dir" ]]; then
+  echo "Answers directory '$answers_dir' does not exist. Creating it."
+  mkdir -p "$answers_dir"
+fi
+
+answers_file="$answers_dir/answers_${model_basename}.jsonl"
+if [[ ! -f "$answers_file" ]]; then
+  echo "Answers file '$answers_file' does not exist. Creating an empty file."
+  touch "$answers_file"
+fi
+
+if [[ ! -d "$ckpt" ]]; then
+  echo "Error: Checkpoint directory '$ckpt' does not exist. Please provide a valid local path."
+  exit 1
+fi
 
 ################# Handle Chunking #################
 

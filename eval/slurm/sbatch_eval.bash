@@ -1,12 +1,15 @@
 #!/bin/bash
 
 conv_mode="llama_3"
-ckpt="/fsx-checkpoints/yashs/plm/plm_1b_cambrian7M_stage2_1024_baseline1/checkpoints/0000007000/"
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --benchmark)
         benchmark="$2"
+        shift 2
+        ;;
+    --ckpt)
+        ckpt="$2"
         shift 2
         ;;
     --help)
@@ -21,11 +24,15 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Check if the required arguments benchmark and ckpt are provided
-if [[  -z "$benchmark" ]]; then
+if [[ -z "$benchmark" ]]; then
   echo "Error: --benchmark is a required argument."
   exit 1
 fi
 
+if [[ -z "$ckpt" ]]; then
+  echo "Error: --ckpt is a required argument."
+  exit 1
+fi
 
 if [ "$benchmark" = "all" ]; then
     benchmarks=(
