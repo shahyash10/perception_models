@@ -158,7 +158,7 @@ def eval_model(args):
                                    "gt_answer": chr(ord('A')+gt_answer),
                                    "prompt": prompt,
                                    "has_img": has_image,
-                                   "model_id": args.model_path,
+                                   "model_id": args.model_base,
                                    "text_answer": line["choices"][gt_answer],
                                    "type": is_multimodal,
                                    "category": category}) + "\n")

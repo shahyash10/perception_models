@@ -125,7 +125,7 @@ def eval_model(args):
             "question_id": line["question_id"],
             "prompt": prompt,
             "answer":generated_text,
-            "model_id": args.model_path
+            "model_id": args.model_base
         }) + "\n")
         ans_file.flush()
     ans_file.close()

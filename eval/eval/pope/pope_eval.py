@@ -164,7 +164,7 @@ def eval_model(args):
                                    "answer":generated_text,
                                    "prompt": prompt[0],
                                    "gt_answer": gt_answer,
-                                   "model_id": args.model_path,
+                                   "model_id": args.model_base,
                                    "category": category
                                    }) + "\n")
         ans_file.flush()

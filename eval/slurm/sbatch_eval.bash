@@ -12,6 +12,10 @@ while [[ $# -gt 0 ]]; do
         ckpt="$2"
         shift 2
         ;;
+    --name)
+        name="$2"
+        shift 2
+        ;;
     --help)
         echo "$helpmsg"
         exit 1
@@ -31,6 +35,11 @@ fi
 
 if [[ -z "$ckpt" ]]; then
   echo "Error: --ckpt is a required argument."
+  exit 1
+fi
+
+if [[ -z "$name" ]]; then
+  echo "Error: --name is a required argument."
   exit 1
 fi
 
@@ -84,5 +93,5 @@ for benchmark in "${benchmarks[@]}"; do
     script="slurm/eval_benchmark.slurm --benchmark $benchmark" 
     # fi
     job_name=${benchmark}-eval
-    sbatch -J $job_name $script --ckpt $ckpt
+    sbatch -J $job_name $script --ckpt $ckpt --name $name
 done

@@ -162,7 +162,7 @@ def eval_model(args):
             "prompt": prompt,
             "answer":generated_text,
             "gt_answer": gt_answer,
-            "model_id": args.model_path,
+            "model_id": args.model_base,
             "text_options": line["text_options"]
         }) + "\n")
         ans_file.flush()

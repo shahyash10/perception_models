@@ -171,7 +171,7 @@ def eval_model(args):
             "answer":generated_text,
             "gt_answer": gt_answer,
             "type": qn_type,
-            "model_id": args.model_path
+            "model_id": args.model_base
         }) + "\n")
         ans_file.flush()
     ans_file.close()

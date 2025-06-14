@@ -128,7 +128,7 @@ def eval_model(args):
         ans_file.write(json.dumps({"question_id": idx,
                                    "answer":generated_text,
                                    "gt_answer": gt_answer,
-                                   "model_id": args.model_path}) + "\n")
+                                   "model_id": args.model_base}) + "\n")
     ans_file.close()
 
 if __name__ == "__main__":

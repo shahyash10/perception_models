@@ -131,7 +131,7 @@ def eval_model(args):
             "gt_answer": line["answer"],
             "category": line["sub_task"],
             "options": line["choices"], 
-            "model_id": args.model_path,
+            "model_id": args.model_base,
         }) + "\n")
         ans_file.flush()
     ans_file.close()

@@ -21,6 +21,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --benchmark) benchmark="$2"; shift 2 ;;
     --ckpt) ckpt="$2"; shift 2 ;;
+    --name) name="$2"; shift 2 ;;
     *) echo "Unknown argument: $1"; exit 1 ;;
   esac
 done
@@ -30,8 +31,14 @@ if [[ -z "$ckpt" ]]; then
   exit 1
 fi
 
+if [[ -z "$name" ]]; then
+  echo "Error: --name argument is required."
+  exit 1
+fi
+
 echo "Benchmark: $benchmark"
 echo "Checkpoint path: $ckpt"
+echoo "Name: $name"
 echo "Conversation mode: $conv_mode"
 
 ################# Setup Environment #################
@@ -61,7 +68,7 @@ for file in "$benchmark_dir" "$eval_file" "$test_file"; do
 done
 
 cd $benchmark_dir
-model_basename=$(basename $ckpt)
+model_basename=$name
 
 answers_dir="./answers"
 if [[ ! -d "$answers_dir" ]]; then
@@ -95,6 +102,7 @@ echo $current_date_time
 for IDX in $(seq 0 $((CHUNKS-1))); do
   CUDA_VISIBLE_DEVICES="${GPULIST[$IDX]}" python $eval_file \
     --model_path "$ckpt" \
+    --model_base "$name" \
     --num_chunks "$CHUNKS" \
     --chunk_idx "$IDX" \
     --answers_file "$answers_file" \

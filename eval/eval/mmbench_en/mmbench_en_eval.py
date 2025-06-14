@@ -150,7 +150,7 @@ def eval_model(args):
                                     "C":line["C"],
                                     "D":line["D"],
                                     "source_id": source_id,
-                                    "model_id": args.model_path,
+                                    "model_id": args.model_base,
                                     "category": category}) + "\n")
             ans_file.flush()
 

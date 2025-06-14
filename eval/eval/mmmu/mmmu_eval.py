@@ -146,7 +146,7 @@ def eval_model(args):
         if isinstance(generated_text, list):
             generated_text = generated_text[0]
         ans_file.write(json.dumps({
-            "model_id": args.model_path,
+            "model_id": args.model_base,
             "question_id": idx,
             "prompt": prompt,
             "answer": generated_text,
