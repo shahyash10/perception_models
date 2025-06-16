@@ -2,6 +2,7 @@ import os
 import json
 import csv
 from datetime import datetime
+import re
 
 current_time = datetime.now()
 time_string = current_time.strftime("%Y-%m-%d %H:%M:%S")
@@ -36,7 +37,8 @@ def compute_metrics(jsonl_file, csv_file, extra_outdir=None):
                 "questionId": int(questionId),
                 "answer": answer
             })
-    file_path = "./answers/docvqa_submission.json"
+    match = re.search(r'answers_(.*)\.jsonl', jsonl_file)
+    file_path = f"./answers/docvqa_submission{match.group(1)}.json"
     with open(file_path, "w") as json_file:
         json.dump(test_list, json_file)
     combined_data = {

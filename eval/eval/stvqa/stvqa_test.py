@@ -3,7 +3,7 @@ import json
 import csv
 import json
 from datetime import datetime
-
+import re
 current_time = datetime.now()
 time_string = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -35,7 +35,8 @@ def compute_metrics(jsonl_file, csv_file, extra_outdir=None):
                 "question_id": int(questionId),
                 "answer": answer
             })
-    file_path = "./answers/stvqa_submission.json"
+    match = re.search(r'answers_(.*)\.jsonl', jsonl_file)
+    file_path = f"./answers/stvqa_submission_{match.group(1)}.json"
     with open(file_path, "w") as json_file:
         json.dump(test_list, json_file)
     combined_data = {
@@ -69,6 +70,7 @@ if __name__ == "__main__":
     parser.add_argument("--answers_file", type=str, required=True, help="Path to the answers file")
     parser.add_argument("--csv_file", type=str, default="./experiments.csv", help="Path to the output csv file to store the experiment data")
     parser.add_argument("--extra_outdir", type=str, default=None, help="Path to an extra output directory in which to store a copy of the information")
+    parser.add_argument("--model_id", type=str, default="default_model", help="Model ID to be used in the submission")
     args = parser.parse_args()
 
     compute_metrics(args.answers_file, args.csv_file, args.extra_outdir)
