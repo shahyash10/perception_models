@@ -135,7 +135,7 @@ def eval_model(args):
             )[0]
         if isinstance(generated_text, list):
             generated_text = generated_text[0]
-        ans_file.write(json.dumps({"model_id":args.model_path,
+        ans_file.write(json.dumps({"model_id": args.model_base,
                                    "question_id": idx,
                                    "answer": generated_text,
                                    "gt_answer": gt_answer,

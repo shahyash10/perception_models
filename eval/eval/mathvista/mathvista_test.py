@@ -81,8 +81,8 @@ def compute_metrics(jsonl_file, output_file, csv_file, extra_outdir=None):
     overall_accuracy = (total_matches * 1.0 / total_count)
 
     overall_metrics = {
-        'accuracy': 100*overall_accuracy,
-        'total_count': 100*total_count
+        'accuracy': overall_accuracy,
+        'total_count': total_count
     }
 
     combined_data = {
