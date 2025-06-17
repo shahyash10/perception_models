@@ -38,7 +38,7 @@ fi
 
 echo "Benchmark: $benchmark"
 echo "Checkpoint path: $ckpt"
-echoo "Name: $name"
+echo "Name: $name"
 echo "Conversation mode: $conv_mode"
 
 ################# Setup Environment #################
