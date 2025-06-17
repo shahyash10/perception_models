@@ -126,7 +126,7 @@ def eval_model(args):
         gt_answer = line["answers"]
         with torch.inference_mode():
             generated_text = generator.generate(
-                [(prompt[0]["content"], image_tensor)] if image_tensor is not None else [(prompt[0]["content"], None)]
+                [(prompt[0]["content"], torch.zeros_like(image_tensor))] if image_tensor is not None else [(prompt[0]["content"], None)]
             )[0]
         if isinstance(generated_text, list):
             generated_text = generated_text[0]

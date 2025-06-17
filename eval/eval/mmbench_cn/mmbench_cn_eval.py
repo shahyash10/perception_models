@@ -132,6 +132,7 @@ def eval_model(args):
             # l2_category = line["l2-category"]
             input_ids = input_ids.to(device='cuda', non_blocking=True)
             with torch.inference_mode():
+                image_tensor = None
                 generated_text = generator.generate( [(prompt[0]["content"], image_tensor)] if image_tensor is not None else [(prompt[0]["content"], None)])[0]
             if isinstance(generated_text, list):
                 generated_text = generated_text[0]

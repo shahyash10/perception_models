@@ -146,6 +146,7 @@ def eval_model(args):
             generated_text = ""
         else:
             with torch.inference_mode():
+            image_tensor = None
                 generated_text = generator.generate(
                     [(prompt[0]["content"], image_tensor)] if image_tensor is not None else [(prompt[0]["content"], None)]
                 )[0]

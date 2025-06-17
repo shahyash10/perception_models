@@ -61,7 +61,7 @@ if [ "$benchmark" = "all" ]; then
         mathvista
         ai2d
         chartqa
-        docvqa
+        # docvqa
         infovqa
         stvqa
         ocrbench
