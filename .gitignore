@@ -12,3 +12,6 @@ lmms-eval/
 logs
 facebook
 meta-llama/
+**/answers/
+**/incorrect/
+**/experiments.csv
