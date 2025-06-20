@@ -3,10 +3,10 @@
 
 name: "plm_8b_stage2"
 dump_dir: /fsx-checkpoints/yashs/plm/plm_8b_cambrian_stage2_baseline
-steps: 14000 # (7000000)/(4*16*8) ~ 14,000
+steps: 7000 # (7000000)/(8*16*8) ~ 7,000
 seed: 777
 optim:
-    lr: 1e-5 # global bz -> 2048/4, lr -> 4e-5/4
+    lr: 2e-5 # global bz -> 2048/2, lr /= 2
     warmup: 120
     lr_min_ratio: 0.01
     clip: 1.0
@@ -55,7 +55,7 @@ model:
 data:
     datamix: Cambrian7M-Shuffled:1.0
     num_workers: 4
-    batch_size: 2
+    batch_size: 8
     image_res: 448
     max_num_tiles: 16
     max_video_frames: 16
