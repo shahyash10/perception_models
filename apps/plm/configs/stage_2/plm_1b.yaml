@@ -1,12 +1,12 @@
 # We use a global batch size of 2048 in stage # 3 for PLM-1B model. Please adjust batch_size as per your training setup.
 # For example, one possible configuration is batch_size=8,nodes=32,gpus_per_node=8 = 8*32*8 = 2048 global batch size.
 
-name: "plm_1b_cambrian7M_stage2_1024_only_general"
-dump_dir:  /fsx-checkpoints/yashs/plm/plm_1b_cambrian7M_stage2_1024_only_general
+name: "plm_1b_language_sweep"
+dump_dir:  /fsx-checkpoints/yashs/plm/plm_1b_language_sweep
 steps: 7000
 seed: 777
 optim:
-    lr: 2e-5
+    lr: 2e-5 # global bz 1024, lr /= 2
     warmup: 120
     lr_min_ratio: 0.01
     clip: 1.0
@@ -55,8 +55,7 @@ model:
         use_gaussian: true
 
 data:
-    # datamix: "Cambrian7M-Shuffled_Science:1.0, Cambrian7M-Shuffled_Code:1.0, Cambrian7M-Shuffled_Counting:1.0, Cambrian7M-Shuffled_General:1.0, Cambrian7M-Shuffled_Math:1.0, Cambrian7M-Shuffled_Ocr:1.0"
-    datamix: "Cambrian7M-Shuffled_General:1.0"
+    datamix: "Cambrian7M-Shuffled:1.0"
     num_workers: 8
     batch_size: 8
     image_res: 448
@@ -66,6 +65,18 @@ data:
     tokenizer_path: facebook/Perception-LM-1B/tokenizer.model
     tokenizer_name: plmchat
     conversation_format: plm_sft
+
+sweep:
+    runs:
+        - data:
+            datamix: "Cambrian7M-Language:0.25,Cambrian7M-Science:1.0,Cambrian7M-Code:1.0,Cambrian7M-Counting:1.0,Cambrian7M-General:1.0,Cambrian7M-Math:1.0,Cambrian7M-OCR:1.0"
+          steps: 5650 # (5,750,500) / 1024
+        - data:
+            datamix: "Cambrian7M-Language:0.5,Cambrian7M-Science:1.0,Cambrian7M-Code:1.0,Cambrian7M-Counting:1.0,Cambrian7M-General:1.0,Cambrian7M-Math:1.0,Cambrian7M-OCR:1.0"
+          steps: 6050 # (6,167,000) / 1024
+        - data:
+            datamix: "Cambrian7M-Language:0.75,Cambrian7M-Science:1.0,Cambrian7M-Code:1.0,Cambrian7M-Counting:1.0,Cambrian7M-General:1.0,Cambrian7M-Math:1.0,Cambrian7M-OCR:1.0"
+          steps: 6450 # (6,583,500) / 1024
 
 profiling:
     run: false
@@ -84,7 +95,7 @@ logging:
         project: stage2
         entity: plm
         group: finetune
-        name: plm_1b_cambrian7M_stage2_1024_only_general
+        name: plm_1b_language_sweep
         tags:
         - plm_1b
         - stage2

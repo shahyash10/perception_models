@@ -2,11 +2,11 @@
 # For example, one possible configuration is batch_size=4,nodes=64,gpus_per_node=8 = 4*64*8 = 2048 global batch size.
 
 name: "plm_8b_stage2"
-dump_dir: ./plm_8b_stage2
-steps: 35000
+dump_dir: /fsx-checkpoints/yashs/plm/plm_8b_cambrian_stage2_baseline
+steps: 14000 # (7000000)/(4*16*8) ~ 14,000
 seed: 777
 optim:
-    lr: 4e-5
+    lr: 1e-5 # global bz -> 2048/4, lr -> 4e-5/4
     warmup: 120
     lr_min_ratio: 0.01
     clip: 1.0
@@ -53,7 +53,7 @@ model:
         use_gaussian: true
 
 data:
-    datamix: <Please consider using data split listed in Table A1 of our paper https://arxiv.org/pdf/2504.13180. The weight of the dataset would be same as the number of samples.>
+    datamix: Cambrian7M-Shuffled:1.0
     num_workers: 4
     batch_size: 2
     image_res: 448
@@ -71,9 +71,17 @@ checkpoint:
     dump:
         every: 500
         keep: 1
-    init_ckpt_path: <Point it to the consolidated checkpoints from PLM 8B Stage 1>
+    init_ckpt_path: /fsx-checkpoints/yashs/plm/plm_8b_cambrian_stage1_shuffled/checkpoints/0000008000/
     is_consolidated_model: True
 
 logging:
     freq: 10
     level: INFO  # Available choices for logging level are: [NOTSET, DEBUG, INFO, WARN, ERROR, FATAL, CRITICAL]
+    wandb:
+        project: stage2
+        entity: plm
+        group: finetune
+        name: plm_8b_cambrian_stage2_baseline
+        tags:
+        - plm_8B
+        - stage2
