@@ -10,6 +10,7 @@
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=640GB
 #SBATCH --verbose
+#SBATCH --account=memorization
 
 #SBATCH --time=72:00:00
 
