@@ -70,7 +70,7 @@ def get_root_dump_dir(cluster_type: ClusterType, group: str) -> str:
     default_dump_dir_map: dict[ClusterType, Path] = {
         ClusterType.RSC: Path(f"/checkpoint/{group}/{user}/amaia_dumps"),
         ClusterType.COREWEAVE: Path(f"/checkpoint/amaia/{group}/{user}/amaia_dumps"),
-        ClusterType.AWS_FAIR_A100: Path(f"/fsx-checkpoints/{user}/dumps"),
+        ClusterType.AWS_FAIR_A100: Path(f"/fsx-checkpoints/{user}/plm"),
         ClusterType.FAIR_CLUSTER_H2: Path(f"/checkpoint/{user}/amaia_dumps"),
     }
     return str(default_dump_dir_map[cluster_type])
