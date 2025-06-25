@@ -9,8 +9,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=640GB
-#SBATCH --verbose
-#SBATCH --account=memorization
+#SBATCH --account=a100-memorization 
 
 #SBATCH --time=72:00:00
 
