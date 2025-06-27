@@ -43,6 +43,16 @@ if [[ -z "$name" ]]; then
   exit 1
 fi
 
+# Check if consolidated.pth exists
+if [[ ! -f "$ckpt/consolidated.pth" ]]; then
+  echo "consolidated.pth not found in $ckpt. Running Python command."
+  source /home/yashs/miniconda3/etc/profile.d/conda.sh
+  conda activate perception_models
+  python /home/yashs/projects/perception_models/apps/plm/consolidate.py --ckpt $ckpt
+  conda deactivate
+  echo "consolidated.pth created successfully."
+fi
+
 if [ "$benchmark" = "all" ]; then
     benchmarks=(
         # vqav2
