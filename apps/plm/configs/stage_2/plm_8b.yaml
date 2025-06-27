@@ -1,12 +1,12 @@
 # We use a global batch size of 2048 in stage # 3 for PLM-8B model. Please adjust batch_size as per your training setup.
 # For example, one possible configuration is batch_size=4,nodes=64,gpus_per_node=8 = 4*64*8 = 2048 global batch size.
 
-name: "plm_8b_stage2"
-dump_dir: /fsx-checkpoints/yashs/plm/plm_8b_cambrian_stage2_baseline
-steps: 7000 # (7000000)/(8*16*8) ~ 7,000
+name: "plm_8b_stage2_cambrian7M"
+dump_dir: /fsx-checkpoints/yashs/plm/plm_8b_stage2_cambrian7M
+steps: 14000 # (7000000)/(4*16*8) ~ 14,000
 seed: 777
 optim:
-    lr: 2e-5 # global bz -> 2048/2, lr /= 2
+    lr: 1e-5 # global bz -> 2048/4, lr /= 4
     warmup: 120
     lr_min_ratio: 0.01
     clip: 1.0
@@ -55,7 +55,7 @@ model:
 data:
     datamix: Cambrian7M-Shuffled:1.0
     num_workers: 4
-    batch_size: 8
+    batch_size: 4
     image_res: 448
     max_num_tiles: 16
     max_video_frames: 16
@@ -81,7 +81,7 @@ logging:
         project: stage2
         entity: plm
         group: finetune
-        name: plm_8b_cambrian_stage2_baseline
+        name: plm_8b_stage2_cambrian7M
         tags:
         - plm_8B
         - stage2
