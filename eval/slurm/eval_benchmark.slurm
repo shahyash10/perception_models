@@ -5,7 +5,7 @@
 #SBATCH --ntasks-per-node=8
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=640GB
-#SBATCH --account=memorization
+#SBATCH --account=a100-memorization
 #SBATCH --time=72:00:00
 #SBATCH --output=./logs/%x/%x-%j.out
 #SBATCH --error=./logs/%x/%x-%j.err
