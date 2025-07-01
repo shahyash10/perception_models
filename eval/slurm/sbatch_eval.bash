@@ -53,6 +53,16 @@ if [[ ! -f "$ckpt/consolidated.pth" ]]; then
   echo "consolidated.pth created successfully."
 fi
 
+echo "ckpt: $ckpt"
+ckpt_parent_dir=$(dirname "$ckpt")
+ckpt_dir="$ckpt_parent_dir/$(basename "$ckpt")"
+for folder in "$ckpt_parent_dir"/*; do
+  if [[ -d "$folder" && "$folder" != "$ckpt_dir" ]]; then
+    echo "Deleting folder: $folder"
+    rm -rf "$folder"
+  fi
+done
+
 if [ "$benchmark" = "all" ]; then
     benchmarks=(
         # vqav2
