@@ -107,9 +107,6 @@ else
 fi
 
 for benchmark in "${benchmarks[@]}"; do
-    # script="slurm/eval_$benchmark.slurm"
-    # # default to eval_benchmark.slurm if the benchmark specific script does not exist
-    # if [ ! -f $script ]; then
     script="slurm/eval_benchmark.slurm --benchmark $benchmark" 
     # fi
     job_name=${benchmark}-eval
